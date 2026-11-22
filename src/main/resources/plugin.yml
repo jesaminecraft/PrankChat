@@ -1,0 +1,5 @@
+name: PrankChat
+version: '1.0'
+main: com.muxito.prankchat.PrankChat
+api-version: '26.3'
+description: Chat format with rank, player head and prank level badge (with hover text).
