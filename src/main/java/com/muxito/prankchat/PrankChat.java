@@ -5,6 +5,7 @@ import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.object.ObjectContents;
 import org.bukkit.Bukkit;
@@ -23,10 +24,15 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Chat format:  [RANK] (head) Name ☠① » message
+ * Rank  = scoreboard tag rank_admin / rank_mod / rank_member
+ * Level = score of the "prank" objective (1..5)
+ */
 public final class PrankChat extends JavaPlugin implements Listener {
 
     private static final String[] BADGES = {
-            "\u2620\u2460", "\u2620\u2461", "\u2620\u2462", "\u2620\u2463", "\u2620\u2464"
+            "☠①", "☠②", "☠③", "☠④", "☠⑤"
     };
     private static final NamedTextColor[] LEVEL_COLORS = {
             NamedTextColor.GREEN, NamedTextColor.YELLOW, NamedTextColor.GOLD,
@@ -86,9 +92,9 @@ public final class PrankChat extends JavaPlugin implements Listener {
     private Component format(Player source, Component message) {
         Info info = cache.getOrDefault(source.getUniqueId(), new Info("MEMBER", 0));
 
-        NamedTextColor rankColor = switch (info.rank()) {
+        TextColor rankColor = switch (info.rank()) {
             case "ADMIN" -> NamedTextColor.RED;
-            case "MOD" -> NamedTextColor.GREEN;
+            case "MOD" -> TextColor.color(0xA020F0);
             default -> NamedTextColor.BLUE;
         };
 
@@ -110,7 +116,7 @@ public final class PrankChat extends JavaPlugin implements Listener {
                     .hoverEvent(HoverEvent.showText(tooltip)));
         }
 
-        out = out.append(Component.text(" \u00bb ", NamedTextColor.GRAY)
+        out = out.append(Component.text(" » ", NamedTextColor.GRAY)
                 .decoration(TextDecoration.BOLD, false));
         out = out.append(message);
         return out;
